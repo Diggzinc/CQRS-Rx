@@ -1,5 +1,6 @@
 # CQRS-Rx
 
+
 My take on a simple .NET Standard 2.0 CQRS library leveraging Reactive Extensions (Rx)
 
 The following codebase is based on the previous work provided by:
@@ -9,5 +10,7 @@ The following codebase is based on the previous work provided by:
 - [Rx works nicely with DDD and Event Sourcing](https://abdullin.com/post/rx-works-nicely-with-ddd-and-event-sourcing/)
 - [Simple CQRS example](https://github.com/gregoryyoung/m-r)
 - [CQRSlite](https://github.com/gautema/CQRSlite)
+
+__STATUS__: This project is still a work in progress (WIP).
 
 __DISCLAIMER__: This project has no intention of becoming a CQRS framework and it's only purpose is to be a tool of learning.
