@@ -10,4 +10,4 @@ The following codebase is based on the previous work provided by:
 - [Simple CQRS example](https://github.com/gregoryyoung/m-r)
 - [CQRSlite](https://github.com/gautema/CQRSlite)
 
-__DISCLAIMER__: This project has no intention of becoming a CQRS framework and only it's only purpose is as a tool of learning.
+__DISCLAIMER__: This project has no intention of becoming a CQRS framework and it's only purpose is to be a tool of learning.
