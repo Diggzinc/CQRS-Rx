@@ -6,21 +6,14 @@ namespace CQRSRx.Commands
     /// <summary>
     /// Asynchronous handler for commands.
     /// </summary>
-    public interface ICommandHandler
+    public interface ICommandHandler<TCommand> where TCommand : ICommand
     {
-        /// <summary>
-        /// Handles a command asynchronously.
-        /// </summary>
-        /// <param name="command">The command to handle.</param>
-        /// <returns>The correspondent task for the command handling.</returns>
-        Task HandleAsync(ICommand command);
-        
         /// <summary>
         /// Handles a command asynchronously with a custom cancellation token.
         /// </summary>
         /// <param name="command">The command to handle.</param>
         /// <param name="cancellationToken">The custom cancellation token.</param>
         /// <returns>The correspondent task for the command handling.</returns>
-        Task HandleAsync(ICommand command, CancellationToken cancellationToken);
+        Task HandleAsync(TCommand command, CancellationToken cancellationToken);
     }
 }
