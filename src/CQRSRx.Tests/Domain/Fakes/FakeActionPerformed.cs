@@ -1,6 +1,6 @@
 using CQRSRx.Events;
 
-namespace CQRSRx.Tests.Domain
+namespace CQRSRx.Tests.Domain.Fakes
 {
         public class FakeActionPerformed : IEvent
         {
