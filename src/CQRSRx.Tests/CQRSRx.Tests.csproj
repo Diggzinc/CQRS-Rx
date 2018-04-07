@@ -3,14 +3,15 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CQRSRx\CQRSRx.csproj"/>
-    <ProjectReference Include="..\CQRSRx.Integration.SimpleInjector\CQRSRx.Integration.SimpleInjector.csproj"/>
+    <ProjectReference Include="..\CQRSRx\CQRSRx.csproj" />
+    <ProjectReference Include="..\CQRSRx.Integration.SimpleInjector\CQRSRx.Integration.SimpleInjector.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SimpleInjector" Version="4.1.0"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.2"/>
-    <PackageReference Include="xunit" Version="2.3.1"/>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1"/>
-    <PackageReference Include="Moq" Version="4.8.2"/>
+    <PackageReference Include="NSubstitute" Version="3.1.0" />
+    <PackageReference Include="SimpleInjector" Version="4.1.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <PackageReference Include="System.Reactive" Version="3.1.1" />
   </ItemGroup>
 </Project>

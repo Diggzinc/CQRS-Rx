@@ -1,7 +1,6 @@
 # CQRS-Rx
 
-
-My take on a simple .NET Standard 2.0 CQRS library leveraging Reactive Extensions (Rx)
+My take on a simple proof of concept .NET Standard 2.0 CQRS library leveraging Reactive Extensions (Rx)
 
 The following codebase is based on the previous work provided by:
 

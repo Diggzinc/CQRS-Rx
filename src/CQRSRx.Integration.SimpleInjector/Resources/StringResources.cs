@@ -1,5 +1,4 @@
-using System;
-using System.Resources;
+﻿using System;
 using SimpleInjector;
 
 namespace CQRSRx.Integration.SimpleInjector.Resources

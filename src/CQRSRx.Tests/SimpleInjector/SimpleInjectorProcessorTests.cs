@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSRx.Commands;
@@ -6,20 +6,20 @@ using CQRSRx.Integration.SimpleInjector;
 using CQRSRx.Integration.SimpleInjector.Exceptions;
 using CQRSRx.Queries;
 using CQRSRx.Tests.SimpleInjector.Stubs;
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using SimpleInjector;
 using Xunit;
 
 namespace CQRSRx.Tests.SimpleInjector
 {
-
     [Trait("Integration", "SimpleInjector")]
     public class SimpleInjectorProcessorTests
     {
         [Fact]
         public async Task Should_Throw_Exception_On_Unresolved_CommandHandler()
         {
-            var command = Mock.Of<ICommand>();
+            var command = Substitute.For<ICommand>();
 
             using (var container = new Container())
             {
@@ -31,7 +31,7 @@ namespace CQRSRx.Tests.SimpleInjector
         [Fact]
         public async Task Should_Throw_Exception_On_Unresolved_QueryHandler()
         {
-            var query = Mock.Of<IQuery<object>>();
+            var query = Substitute.For<IQuery<object>>();
 
             using (var container = new Container())
             {
@@ -44,14 +44,14 @@ namespace CQRSRx.Tests.SimpleInjector
         public async Task Should_Not_Wrap_Exception_When_CommandHandler_Throws_Exception()
         {
             var command = new StubCommand();
-            var handlerMock = new Mock<ICommandHandler<StubCommand>>();
-            handlerMock
-                .Setup(h => h.HandleAsync(It.IsAny<StubCommand>(), It.IsAny<CancellationToken>()))
-                .ThrowsAsync(new ArgumentException());
+            var handler = Substitute.For<ICommandHandler<StubCommand>>();
+            handler
+                .HandleAsync(Arg.Any<StubCommand>(), Arg.Any<CancellationToken>())
+                .Throws(new ArgumentException());
 
             using (var container = new Container())
             {
-                container.Register<ICommandHandler<StubCommand>>(() => handlerMock.Object);
+                container.Register(() => handler);
                 container.Verify();
 
                 IProcessor processor = new SimpleInjectorProcessor(container);
@@ -63,14 +63,14 @@ namespace CQRSRx.Tests.SimpleInjector
         public async Task Should_Not_Wrap_Exception_When_QueryHandler_Throws_Exception()
         {
             var query = new StubQuery<object>();
-            var handlerMock = new Mock<IQueryHandler<StubQuery<object>, object>>();
-            handlerMock
-                .Setup(h => h.HandleAsync(It.IsAny<StubQuery<object>>(), It.IsAny<CancellationToken>()))
-                .ThrowsAsync(new ArgumentException());
+            var handler = Substitute.For<IQueryHandler<StubQuery<object>, object>>();
+            handler
+                .HandleAsync(Arg.Any<StubQuery<object>>(), Arg.Any<CancellationToken>())
+                .Throws(new ArgumentException());
 
             using (var container = new Container())
             {
-                container.Register<IQueryHandler<StubQuery<object>, object>>(() => handlerMock.Object);
+                container.Register(() => handler);
                 container.Verify();
 
                 IProcessor processor = new SimpleInjectorProcessor(container);
@@ -82,21 +82,22 @@ namespace CQRSRx.Tests.SimpleInjector
         public async Task Should_Process_Command()
         {
             var command = new StubCommand();
-            var handlerMock = new Mock<ICommandHandler<StubCommand>>();
-            handlerMock
-                .Setup(h => h.HandleAsync(It.IsAny<StubCommand>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask)
-                .Verifiable();
+            var handler = Substitute.For<ICommandHandler<StubCommand>>();
+            handler
+                .HandleAsync(Arg.Any<StubCommand>(), Arg.Any<CancellationToken>())
+                .Returns(Task.CompletedTask);
 
             using (var container = new Container())
             {
-                container.Register<ICommandHandler<StubCommand>>(() => handlerMock.Object);
+                container.Register(() => handler);
                 container.Verify();
 
                 IProcessor processor = new SimpleInjectorProcessor(container);
                 await processor.ProcessAsync(command);
 
-                handlerMock.Verify();
+                await handler
+                    .Received()
+                    .HandleAsync(Arg.Any<StubCommand>(), Arg.Any<CancellationToken>());
             }
         }
 
@@ -105,21 +106,23 @@ namespace CQRSRx.Tests.SimpleInjector
         {
             const string expectedResult = "value";
             var query = new StubQuery<string>();
-            var handlerMock = new Mock<IQueryHandler<StubQuery<string>, string>>();
-            handlerMock
-                .Setup(h => h.HandleAsync(It.IsAny<StubQuery<string>>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(expectedResult)
-                .Verifiable();
+            var handler = Substitute.For<IQueryHandler<StubQuery<string>, string>>();
+            handler
+                .HandleAsync(Arg.Any<StubQuery<string>>(), Arg.Any<CancellationToken>())
+                .Returns(expectedResult);
 
             using (var container = new Container())
             {
-                container.Register<IQueryHandler<StubQuery<string>, string>>(() => handlerMock.Object);
+                container.Register(() => handler);
                 container.Verify();
 
                 IProcessor processor = new SimpleInjectorProcessor(container);
                 var actualResult = await processor.ProcessAsync(query);
 
-                handlerMock.Verify();
+                await handler
+                    .Received()
+                    .HandleAsync(Arg.Any<StubQuery<string>>(), Arg.Any<CancellationToken>());
+
                 Assert.Equal(expectedResult, actualResult);
             }
         }

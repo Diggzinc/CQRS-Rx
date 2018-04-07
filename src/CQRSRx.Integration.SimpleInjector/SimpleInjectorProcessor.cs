@@ -1,5 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using CQRSRx.Commands;
@@ -15,7 +15,6 @@ namespace CQRSRx.Integration.SimpleInjector
     /// </summary>
     public class SimpleInjectorProcessor : IProcessor
     {
-        private const string HandlerMethodName = "HandleAsync";
         private readonly Container _container;
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace CQRSRx.Integration.SimpleInjector
             try
             {
                 var handler = _container.GetInstance(handlerType);
-                var method = handlerType.GetMethod(HandlerMethodName);
+                var method = handlerType.GetMethod(nameof(ICommandHandler<ICommand>.HandleAsync));
                 return (Task)method.Invoke(handler, new object[] { command, cancellationToken });
             }
             catch (ActivationException exception)
@@ -51,6 +50,10 @@ namespace CQRSRx.Integration.SimpleInjector
                 throw new UnresolvedHandlerException(
                     StringResources.CannotResolveHandler(handlerType),
                     exception);
+            }
+            catch (TargetInvocationException exception)
+            {
+                throw exception.InnerException;
             }
         }
 
@@ -66,11 +69,11 @@ namespace CQRSRx.Integration.SimpleInjector
         public Task<TResult> ProcessAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken)
         {
             var handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
-            
+
             try
             {
                 var handler = _container.GetInstance(handlerType);
-                var method = handlerType.GetMethod(HandlerMethodName);
+                var method = handlerType.GetMethod(nameof(IQueryHandler<IQuery<TResult>, TResult>.HandleAsync));
                 return (Task<TResult>)method.Invoke(handler, new object[] { query, cancellationToken });
             }
             catch (ActivationException exception)
@@ -78,6 +81,10 @@ namespace CQRSRx.Integration.SimpleInjector
                 throw new UnresolvedHandlerException(
                     StringResources.CannotResolveHandler(handlerType),
                     exception);
+            }
+            catch (TargetInvocationException exception)
+            {
+                throw exception.InnerException;
             }
         }
     }
