@@ -13,17 +13,11 @@ namespace CQRSRx.Events
         public IEvent Event { get; }
 
         /// <summary>
-        /// The time when the change was emitted.
-        /// </summary>
-        public DateTimeOffset TimeStamp { get; }
-
-        /// <summary>
         /// Constructs a new instance of a change.
         /// </summary>
         public Change(IEvent evt)
         {
             Event = evt;
-            TimeStamp = DateTimeOffset.Now;
         }
 
     }

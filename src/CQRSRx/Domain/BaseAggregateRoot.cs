@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using CQRSRx.Events;
+using CQRSRx.Exceptions;
+using CQRSRx.Resources;
 
 namespace CQRSRx.Domain
 {
@@ -34,10 +36,22 @@ namespace CQRSRx.Domain
         void IObserver<IEvent>.OnCompleted() { }
 
         /// <inheritdoc/>
-        void IObserver<IEvent>.OnError(Exception error) { }
+        void IObserver<IEvent>.OnError(Exception error) 
+            => throw new CorruptedStreamException(StringResources.AggregateSourceStreamIsCorrupted(), error);
 
         /// <inheritdoc/>
-        void IObserver<IEvent>.OnNext(IEvent evt) => Apply(evt);
+        void IObserver<IEvent>.OnNext(IEvent evt)
+        {
+            var expectedVersion = _version + 1;
+
+            if (evt.Version != expectedVersion)
+            {
+                throw new StreamEventOutOfOrderException(StringResources.AggregateSourceStreamProvidedEventOutOfOrder(expectedVersion, evt.Version));
+            }
+
+            Apply(evt);
+            _version++;
+        }
 
         /// <inheritdoc/>
         void IAggregateRoot.PublishChanges()
@@ -65,6 +79,8 @@ namespace CQRSRx.Domain
         protected void ApplyChange(IEvent evt)
         {
             Apply(evt);
+            _version++;
+            evt.Version = _version;
             _uncommittedEvents.Enqueue(evt);
         }
 
@@ -73,8 +89,6 @@ namespace CQRSRx.Domain
             var handlerType = typeof(IEventHandler<>).MakeGenericType(evt.GetType());
             var method = handlerType.GetMethod(nameof(IEventHandler<TEvent>.Apply));
             method.Invoke(this, new object[] { evt });
-            _version++;
-            //evt.Version = Version;
         }
     }
 }

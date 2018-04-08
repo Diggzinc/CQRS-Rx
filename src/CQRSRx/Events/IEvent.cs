@@ -10,6 +10,6 @@ namespace CQRSRx.Events
         /// <summary>
         /// The version of the event.
         /// </summary>
-        long Version { get; }
+        long Version { get; set; }
     }
 }
