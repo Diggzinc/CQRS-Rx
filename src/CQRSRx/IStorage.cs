@@ -9,7 +9,7 @@ namespace CQRSRx
     /// <summary>
     /// Generic Event storage.
     /// </summary>
-    public interface IStorage
+    public interface IStorage : IObservable<IEvent>
     {
         /// <summary>
         /// Loads the given stream of events from the storage.
