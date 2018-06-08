@@ -10,13 +10,17 @@ The following codebase is based on the previous work provided by:
 * [Simple CQRS example](https://github.com/gregoryyoung/m-r)
 * [CQRSlite](https://github.com/gautema/CQRSlite)
 
-**STATUS**: This project is still a work in progress (WIP).
+**STATUS**: "Finished" as in I've reached my conclusions which can be seen on the following section.
 
 **DISCLAIMER**: This project has no intention of becoming a CQRS framework and it's only purpose is to be a tool of learning.
 
 ## Thoughts & Opinions
 
 Since this is project is, as stated previously, a tool of learning here are my overall thoughts and opinions during development, without further ado here they are.
+
+### On building my own CQS micro library
+
+Basically I should not have done it... sadly I wasn't aware of [MediatR](https://github.com/jbogard/MediatR), this is due to the fact that I _got lost_ on the nomenclature for the so called `mediator` pattern, and have been searching for keywords such as `router`, `proxy` instead.
 
 ### On leveraging Rx for CQRS/ES
 
